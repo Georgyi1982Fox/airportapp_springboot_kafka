@@ -7,18 +7,23 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 @Slf4j
-@Getter
 @Component
 public class BoardProvider {
 
     private final List<Board> boards = new ArrayList<>();
-    private Optional<Board> getBoard(String boardName){
+    private final Lock lock = new ReentrantLock(true);
+    public Optional<Board> getBoard(String boardName){
         return boards.stream()
                 .filter(board -> board.getName().equals(boardName))
                 .findFirst();
     }
-    private void addBoard(Board board){
+    public void addBoard(Board board){
+        try{
+        lock.lock();
         Optional<Board> optionalBoard = getBoard(board.getName());
         if(optionalBoard.isPresent()){
             int ind = boards.indexOf(optionalBoard.get());
@@ -26,6 +31,12 @@ public class BoardProvider {
         }else {
             boards.add(board);
         }
+    } finally {
+          lock.unlock();
+        }
     }
 
+    public List<Board> getBoards() {
+        return boards;
+    }
 }

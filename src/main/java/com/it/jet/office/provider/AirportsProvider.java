@@ -9,14 +9,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-
 @Slf4j
 @Getter
 @Setter
 @ConfigurationProperties(prefix = "application")
-public class AirportsProvider {
-    private final List<Airport> ports = new ArrayList<>();
+public class AirportsProvider{
 
+    private final List<Airport> ports = new ArrayList<>();
     private Airport findAirportAndRemovePort(String boardName){
         AtomicReference<Airport> res = new AtomicReference<>();
         ports.stream().filter(airport -> airport.getBoards().contains(boardName))
